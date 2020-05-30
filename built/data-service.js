@@ -42,19 +42,13 @@ exports.setup_country_list = function () { return __awaiter(_this, void 0, void 
     var response, jsonData;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                console.log("setingup country list");
-                return [4 /*yield*/, fetch(BASE_API_URL + 'countries')];
+            case 0: return [4 /*yield*/, fetch(BASE_API_URL + 'countries')];
             case 1:
                 response = _a.sent();
-                console.log("response", response);
-                console.log("response.statusCode", response.statusCode);
-                console.log("response.status", response.status);
                 if (!(response.status == 200)) return [3 /*break*/, 3];
                 return [4 /*yield*/, response.json()];
             case 2:
                 jsonData = _a.sent();
-                console.log("response.data", jsonData);
                 return [2 /*return*/, jsonData];
             case 3: return [2 /*return*/];
         }
@@ -80,9 +74,7 @@ exports.get_data_from_country = function (country) { return __awaiter(_this, voi
     var response, jsonData;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                console.log("in get_data_from_country", country);
-                return [4 /*yield*/, fetch(BASE_API_URL + 'countries/' + country)];
+            case 0: return [4 /*yield*/, fetch(BASE_API_URL + 'countries/' + country)];
             case 1:
                 response = _a.sent();
                 if (!(response.status == 200)) return [3 /*break*/, 3];

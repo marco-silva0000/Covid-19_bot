@@ -56,22 +56,15 @@ function get_data_from(msg, country, command) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log('in get data from');
-                    console.log('msg', msg);
-                    console.log('country', country);
-                    console.log('command', command);
                     if (!(country === 'world')) return [3 /*break*/, 2];
                     return [4 /*yield*/, data_service_1.get_data_from_world()];
                 case 1:
                     data = _a.sent();
                     msg.reply.text("Values for the globe:\n    Current cases -> " + data.cases + "\n    Current deaths -> " + data.deaths + "\n    Recovered -> " + data.recovered);
                     return [3 /*break*/, 4];
-                case 2:
-                    console.log('in else');
-                    return [4 /*yield*/, data_service_1.get_data_from_country(country)];
+                case 2: return [4 /*yield*/, data_service_1.get_data_from_country(country)];
                 case 3:
                     data = _a.sent();
-                    console.log('got data from country', data);
                     switch (command) {
                         case 'news':
                             msg.reply.text("Today values for " + data.country + " are " + data.todayCases + " new cases " + emoji.get('mask') + " and " + data.todayDeaths + " new deaths " + emoji.get('skull') + ".");
@@ -96,35 +89,22 @@ function get_data_from(msg, country, command) {
     });
 }
 function validate_command(command, err) {
-    console.log('in validate_command', command);
-    console.log('in validate_command', err);
     if (!available_commands.includes(command)) {
         err = command + " it's not an available command.";
         return false;
     }
-    console.log("Available command.");
     return true;
 }
 function validate_country(queried_country, err) {
-    return true; // TODO FIX
-    console.log("in validate_country", queried_country);
-    var validattion = false;
-    available_countries.forEach(function (available_country) {
-        console.log(available_country);
-        console.log(queried_country + " // " + available_country.country_name + " " + available_country.country_code_iso2 + " " + available_country.country_code_iso3);
-        if (available_country.country_name === queried_country
-            || available_country.country_code_iso2 === queried_country
-            || available_country.country_code_iso3 === queried_country) {
-            //console.log("Available country.")
-            validattion = true;
-        }
-    });
-    console.log("will return", validattion);
-    return validattion;
+    try {
+        return available_countries.some(function (available_country) { return (available_country.country === queried_country || available_country.countryInfo.iso2 === queried_country || available_country.countryInfo.iso3 === queried_country); });
+    }
+    catch (_a) {
+        return false;
+    }
 }
 //execution
 data_service_1.setup_country_list().then(function (data) { return available_countries = data; });
-console.log(available_countries);
 bot.on(['/covid'], function (msg) { return __awaiter(_this, void 0, void 0, function () {
     var message, command, country, err;
     return __generator(this, function (_a) {
@@ -133,20 +113,12 @@ bot.on(['/covid'], function (msg) { return __awaiter(_this, void 0, void 0, func
                 message = msg.text;
                 command = message.split(' ')[1];
                 country = message.split(' ')[2];
-                console.log(command);
-                console.log(country);
-                //default commands
+                // default commands
                 if (command == undefined) {
                     command = 'complete';
                 }
-                console.log(command);
-                console.log(country);
                 if (country == undefined) {
-                    console.log(command);
-                    console.log(country);
-                    if (validate_country(command) || country === 'world') {
-                        console.log(command);
-                        console.log(country);
+                    if (command === 'world' || validate_country(command)) {
                         country = command;
                         command = 'complete';
                     }
@@ -154,10 +126,7 @@ bot.on(['/covid'], function (msg) { return __awaiter(_this, void 0, void 0, func
                         country = 'Portugal';
                     }
                 }
-                console.log('here');
-                country = 'Portugal';
-                if (!(validate_command(command, err) && (validate_country(country, err) || country == 'world'))) return [3 /*break*/, 2];
-                console.log('will get data from', country);
+                if (!(validate_command(command, err) && (country == 'world' || validate_country(country, err)))) return [3 /*break*/, 2];
                 return [4 /*yield*/, get_data_from(msg, country, command)];
             case 1:
                 _a.sent();
