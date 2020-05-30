@@ -14,7 +14,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/moment": "^2.13.0",
+    "@types/node-emoji": "^1.8.1",
+    "@types/telebot": "^1.2.1",
     "covid19-api": "^1.0.5",
+    "dotenv": "^8.2.0",
     "inspirational-quotes": "^1.0.8",
     "jhucsse.covid": "^1.3.2",
     "moment": "^2.24.0",
