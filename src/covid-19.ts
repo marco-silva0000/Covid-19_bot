@@ -1,25 +1,19 @@
 import Telebot = require('telebot');
-import covid = require('jhucsse.covid');
-import https = require('https');
 import emoji = require('node-emoji');
 import dotenv = require("dotenv");
 
 import fetch = require("node-fetch");
 
 import { setup_country_list, get_data_from_world, get_data_from_country } from './data-service';
+import {Country} from "./models/Country";
 
 dotenv.config()
 
 const botApiKey = process.env.COVID19_BOT_KEY;
 const bot = new Telebot(botApiKey);
-/*
-TODO:
-- Auto reply information on API value change
 
-*/
-
-var available_commands=['news', 'total', 'perMillion', 'complete'];
-let available_countries = [];
+const availableCommands = ['news', 'total', 'perMillion', 'complete'];
+let available_countries: Country[] = [];
 
 
 async function get_data_from(msg, country, command) {
@@ -58,18 +52,14 @@ async function get_data_from(msg, country, command) {
           break;
 
         default:
-          msg.reply.text(`Command not found, available commands are the following:
-          -> news
-          -> total
-          -> perMillion
-          -> complete`);    
+          msg.reply.text(`Command not found, available commands are the following:\n->${availableCommands.join('->')}`);
           break;
       }
    }
 }
 
 function validate_command(command, err){
-  if (!available_commands.includes(command)){
+  if (!availableCommands.includes(command)){
     err = command + " it's not an available command.";
     return false;
   }
@@ -120,7 +110,7 @@ bot.on(['/covid'], async (msg) => {
 
 bot.on(['/help'], (msg) => {
   msg.reply.text(`Available commands are:
-  ${available_commands}
+  ${availableCommands}
   
   Available countries are:
   ${available_countries}
