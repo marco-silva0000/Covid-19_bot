@@ -40,6 +40,7 @@ var Telebot = require("telebot");
 var emoji = require("node-emoji");
 var dotenv = require("dotenv");
 var data_service_1 = require("./data-service");
+
 dotenv.config();
 var botApiKey = process.env.COVID19_BOT_KEY;
 var bot = new Telebot(botApiKey);
@@ -48,6 +49,7 @@ TODO:
 - Auto reply information on API value change
 
 */
+
 var available_commands = ['news', 'total', 'perMillion', 'complete'];
 var available_countries = [];
 function get_data_from(msg, country, command) {
@@ -88,6 +90,7 @@ function get_data_from(msg, country, command) {
         });
     });
 }
+
 function validate_command(command, err) {
     if (!available_commands.includes(command)) {
         err = command + " it's not an available command.";
@@ -138,6 +141,7 @@ bot.on(['/covid'], function (msg) { return __awaiter(_this, void 0, void 0, func
         }
     });
 }); });
+
 bot.on(['/help'], function (msg) {
     msg.reply.text("Available commands are:\n  " + available_commands + "\n  \n  Available countries are:\n  " + available_countries + "\n  \n  Example command:\n  /covid complete Portugal ");
 });

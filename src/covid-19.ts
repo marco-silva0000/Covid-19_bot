@@ -3,6 +3,7 @@ import covid = require('jhucsse.covid');
 import https = require('https');
 import emoji = require('node-emoji');
 import dotenv = require("dotenv");
+
 import fetch = require("node-fetch");
 
 import { setup_country_list, get_data_from_world, get_data_from_country } from './data-service';
@@ -64,8 +65,7 @@ async function get_data_from(msg, country, command) {
           -> complete`);    
           break;
       }
-      
-  }
+   }
 }
 
 function validate_command(command, err){
@@ -86,7 +86,6 @@ function validate_country(queried_country, err?){
 }
 
 //execution
-
 setup_country_list().then(data => available_countries = data);
 
 bot.on(['/covid'], async (msg) => {
@@ -113,6 +112,7 @@ bot.on(['/covid'], async (msg) => {
 
     if (validate_command(command, err) && (country == 'world' || validate_country(country, err))) {
       await get_data_from(msg, country, command);
+
     }else{
       msg.reply.text(err);
     }
