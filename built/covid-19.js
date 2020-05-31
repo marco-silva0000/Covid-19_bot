@@ -34,23 +34,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var Telebot = require("telebot");
 var emoji = require("node-emoji");
 var dotenv = require("dotenv");
 var data_service_1 = require("./data-service");
-
+var commands_1 = require("./bot/commands");
 dotenv.config();
 var botApiKey = process.env.COVID19_BOT_KEY;
 var bot = new Telebot(botApiKey);
-/*
-TODO:
-- Auto reply information on API value change
-
-*/
-
-var available_commands = ['news', 'total', 'perMillion', 'complete'];
+var availableCommands = ['news', 'total', 'perMillion', 'complete'];
 var available_countries = [];
 function get_data_from(msg, country, command) {
     return __awaiter(this, void 0, void 0, function () {
@@ -59,12 +52,12 @@ function get_data_from(msg, country, command) {
             switch (_a.label) {
                 case 0:
                     if (!(country === 'world')) return [3 /*break*/, 2];
-                    return [4 /*yield*/, data_service_1.get_data_from_world()];
+                    return [4 /*yield*/, data_service_1.getDataFromWorld()];
                 case 1:
                     data = _a.sent();
                     msg.reply.text("Values for the globe:\n    Current cases -> " + data.cases + "\n    Current deaths -> " + data.deaths + "\n    Recovered -> " + data.recovered);
                     return [3 /*break*/, 4];
-                case 2: return [4 /*yield*/, data_service_1.get_data_from_country(country)];
+                case 2: return [4 /*yield*/, data_service_1.getDataFromCountry(country)];
                 case 3:
                     data = _a.sent();
                     switch (command) {
@@ -81,7 +74,7 @@ function get_data_from(msg, country, command) {
                             msg.reply.text("Values for " + data.country + ":\n          Current cases " + emoji.get('mask') + " -> " + data.cases + "\n          New cases " + emoji.get('mask') + " -> " + data.todayCases + " ( +" + ((data.todayCases / data.cases) * 100).toFixed(2) + "% " + ((data.todayDeaths / data.deaths == 0) ? "Not updated yet" : "") + ")\n          Current deaths " + emoji.get('skull') + " -> " + data.deaths + "\n          New deaths " + emoji.get('skull') + " -> " + data.todayDeaths + " ( +" + ((data.todayDeaths / data.deaths) * 100).toFixed(2) + "% " + ((data.todayDeaths / data.deaths == 0) ? "Not updated yet" : "") + ")\n          Recovered " + emoji.get('runner') + " -> " + data.recovered + "\n          Active " + emoji.get('zombie') + " -> " + data.active + "\n          Critical " + emoji.get('syringe') + " -> " + data.critical + "\n          Cases per one Million -> " + data.casesPerOneMillion + "\n          Deaths per one Million -> " + data.deathsPerOneMillion);
                             break;
                         default:
-                            msg.reply.text("Command not found, available commands are the following:\n          -> news\n          -> total\n          -> perMillion\n          -> complete");
+                            msg.reply.text("Command not found, available commands are the following:\n->" + availableCommands.join('->'));
                             break;
                     }
                     _a.label = 4;
@@ -90,59 +83,10 @@ function get_data_from(msg, country, command) {
         });
     });
 }
-
-function validate_command(command, err) {
-    if (!available_commands.includes(command)) {
-        err = command + " it's not an available command.";
-        return false;
-    }
-    return true;
-}
-function validate_country(queried_country, err) {
-    try {
-        return available_countries.some(function (available_country) { return (available_country.country === queried_country || available_country.countryInfo.iso2 === queried_country || available_country.countryInfo.iso3 === queried_country); });
-    }
-    catch (_a) {
-        return false;
-    }
-}
 //execution
-data_service_1.setup_country_list().then(function (data) { return available_countries = data; });
-bot.on(['/covid'], function (msg) { return __awaiter(_this, void 0, void 0, function () {
-    var message, command, country, err;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                message = msg.text;
-                command = message.split(' ')[1];
-                country = message.split(' ')[2];
-                // default commands
-                if (command == undefined) {
-                    command = 'complete';
-                }
-                if (country == undefined) {
-                    if (command === 'world' || validate_country(command)) {
-                        country = command;
-                        command = 'complete';
-                    }
-                    else {
-                        country = 'Portugal';
-                    }
-                }
-                if (!(validate_command(command, err) && (country == 'world' || validate_country(country, err)))) return [3 /*break*/, 2];
-                return [4 /*yield*/, get_data_from(msg, country, command)];
-            case 1:
-                _a.sent();
-                return [3 /*break*/, 3];
-            case 2:
-                msg.reply.text(err);
-                _a.label = 3;
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
-
-bot.on(['/help'], function (msg) {
-    msg.reply.text("Available commands are:\n  " + available_commands + "\n  \n  Available countries are:\n  " + available_countries + "\n  \n  Example command:\n  /covid complete Portugal ");
+data_service_1.setupCountryList().then(function (data) { return available_countries = data; });
+commands_1.commandList.map(function (_a) {
+    var types = _a.types, command = _a.command;
+    return bot.on(types, command);
 });
 bot.start();

@@ -4,8 +4,9 @@ import dotenv = require("dotenv");
 
 import fetch = require("node-fetch");
 
-import { setup_country_list, get_data_from_world, get_data_from_country } from './data-service';
+import {getDataFromCountry, getDataFromWorld, setupCountryList} from './data-service';
 import {Country} from "./models/Country";
+import {commandList} from "./bot/commands";
 
 dotenv.config()
 
@@ -18,7 +19,7 @@ let available_countries: Country[] = [];
 
 async function get_data_from(msg, country, command) {
   if (country === 'world') {
-   const data = await get_data_from_world()
+   const data = await getDataFromWorld()
    msg.reply.text(
     `Values for the globe:
     Current cases -> ${data.cases}
@@ -27,7 +28,7 @@ async function get_data_from(msg, country, command) {
     );   
   }
   else {
-    const data = await get_data_from_country(country)
+    const data = await getDataFromCountry(country)
       switch (command) {
         case 'news':
           msg.reply.text("Today values for "+data.country+" are "+data.todayCases+" new cases "+emoji.get('mask')+" and "+ data.todayDeaths+" new deaths "+emoji.get('skull')+"." );    
@@ -58,65 +59,12 @@ async function get_data_from(msg, country, command) {
    }
 }
 
-function validate_command(command, err){
-  if (!availableCommands.includes(command)){
-    err = command + " it's not an available command.";
-    return false;
-  }
-  return true;
-}
 
-function validate_country(queried_country, err?){
-  try {
-    return available_countries.some(available_country =>  (available_country.country === queried_country || available_country.countryInfo.iso2 === queried_country || available_country.countryInfo.iso3 === queried_country))
-  }
-  catch {
-    return false
-  }
-}
 
 //execution
-setup_country_list().then(data => available_countries = data);
-
-bot.on(['/covid'], async (msg) => {
-    var message = msg.text;
-    var command = message.split(' ')[1];
-    var country = message.split(' ')[2];
-    var err;
-
-    // default commands
-    
-    if (command == undefined) {
-      command = 'complete';
-    }
-
-    if (country == undefined) {
-      if (command === 'world' || validate_country(command)) {
-        country = command;
-        command = 'complete';
-      }else{
-      country = 'Portugal';
-    }
-    }
+setupCountryList().then(data => available_countries = data);
 
 
-    if (validate_command(command, err) && (country == 'world' || validate_country(country, err))) {
-      await get_data_from(msg, country, command);
-
-    }else{
-      msg.reply.text(err);
-    }
-})
-
-bot.on(['/help'], (msg) => {
-  msg.reply.text(`Available commands are:
-  ${availableCommands}
-  
-  Available countries are:
-  ${available_countries}
-  
-  Example command:
-  /covid complete Portugal `);
-})
+commandList.map(({types, command}) => bot.on(types, command))
 
 bot.start();

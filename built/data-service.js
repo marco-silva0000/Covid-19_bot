@@ -38,7 +38,7 @@ var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var fetch = require("node-fetch");
 var BASE_API_URL = 'https://corona.lmao.ninja/v2/';
-exports.setup_country_list = function () { return __awaiter(_this, void 0, void 0, function () {
+exports.setupCountryList = function () { return __awaiter(_this, void 0, void 0, function () {
     var response, jsonData;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -54,7 +54,7 @@ exports.setup_country_list = function () { return __awaiter(_this, void 0, void 
         }
     });
 }); };
-exports.get_data_from_world = function () { return __awaiter(_this, void 0, void 0, function () {
+exports.getDataFromWorld = function () { return __awaiter(_this, void 0, void 0, function () {
     var response, jsonData;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -70,7 +70,7 @@ exports.get_data_from_world = function () { return __awaiter(_this, void 0, void
         }
     });
 }); };
-exports.get_data_from_country = function (country) { return __awaiter(_this, void 0, void 0, function () {
+exports.getDataFromCountry = function (country) { return __awaiter(_this, void 0, void 0, function () {
     var response, jsonData;
     return __generator(this, function (_a) {
         switch (_a.label) {

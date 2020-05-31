@@ -5,7 +5,7 @@ import { World } from "./models/World";
 
 const BASE_API_URL = 'https://corona.lmao.ninja/v2/'
 
-export const setup_country_list = async () => {
+export const setupCountryList = async () => {
   const response = await fetch(BASE_API_URL + 'countries')
   if (response.status == 200) {
     const jsonData: Country[] = await response.json()
@@ -15,7 +15,7 @@ export const setup_country_list = async () => {
 }
 
 
-export const get_data_from_world = async () => {
+export const getDataFromWorld = async () => {
   const response = await fetch(BASE_API_URL + 'all')
   if (response.status == 200) {
     const jsonData: World = await response.json()
@@ -25,7 +25,7 @@ export const get_data_from_world = async () => {
 }
 
 
-export const get_data_from_country = async (country: string) => {
+export const getDataFromCountry = async (country: string) => {
   const response = await fetch(BASE_API_URL + 'countries/' + country)
   if (response.status == 200) {
     const jsonData: Country = await response.json()
